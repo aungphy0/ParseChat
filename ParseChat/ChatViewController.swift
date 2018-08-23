@@ -11,6 +11,7 @@ import Parse
 
 class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+    var window = UIWindow()
     var messages: [PFObject] = []
     
     @IBOutlet weak var tableView: UITableView!
@@ -34,9 +35,20 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     @IBAction func logoutButton(_ sender: Any) {
-            PFUser.logOut()
-        
-            self.performSegue(withIdentifier: "logoutSegue", sender: nil)
+        // Logout the current user
+       
+        PFUser.logOutInBackground(block: { (error) in
+            if let error = error {
+                print(error.localizedDescription)
+            } else {
+                let user = PFUser.current() ?? nil
+                print("Successful logout")
+                print(user as Any)
+             
+                self.performSegue(withIdentifier: "logoutSegue", sender: nil)
+            }
+            
+        })
     }
     override func viewDidLoad() {
         super.viewDidLoad()
